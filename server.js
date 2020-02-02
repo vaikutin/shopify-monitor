@@ -73,32 +73,3 @@ mongoose.connect(global.config.mongodb_uri, (err) => {
 	process.exit();
 });
 
-global.startTasks = function() {
-
-	Product.remove({}, function(err) {
-		if (!err) {
-			Seller.find({}, (err, tasksQuery) => {
-				for (let i = 0; i < tasksQuery.length; i++) {
-					global.tasks.push(new Task(tasksQuery[i]));
-					global.tasks[i].start();
-				}
-				global.status = 'Active';
-				global.startTime = moment().format('x');
-				global.needsRestart = false;
-				global.stoppedTime = null
-			});
-		}
-	});
-}
-
-global.stopTasks = function() {
-	Seller.find({}, (err, tasksQuery) => {
-		for (let i = 0; i < global.tasks.length; i++) {
-			global.tasks[i].stop();
-		}
-		global.tasks = [];
-		global.status = 'Stopped';
-		global.needsRestart = false;
-		global.stoppedTime = moment().format('x')
-	});
-}
